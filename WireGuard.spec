@@ -71,7 +71,7 @@ WireGuard kernel module.\
 %{?with_kernel:%{expand:%create_kernel_packages}}
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 
 %build
 %{?with_kernel:%{expand:%build_kernel_packages}}
