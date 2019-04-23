@@ -15,10 +15,10 @@ exit 1
 %define		rel	1
 %define		pname	WireGuard
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	0.0.20190123
+Version:	0.0.20190406
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 Source0:	https://git.zx2c4.com/WireGuard/snapshot/%{pname}-%{version}.tar.xz
-# Source0-md5:	8a0a232f65d5d86dd408efd9ac30bcf9
+# Source0-md5:	c11254fe48695e61c145a7e82756ecba
 Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 License:	GPL v2
 Group:		Networking/Daemons
