@@ -12,16 +12,17 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel	1
+%define		rel	2
 %define		pname	WireGuard
+Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 Version:	0.0.20191219
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
-Source0:	https://git.zx2c4.com/WireGuard/snapshot/%{pname}-%{version}.tar.xz
-# Source0-md5:	5175ca88850993dc88a4c9d924ee79d4
-Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 License:	GPL v2
 Group:		Networking/Daemons
+Source0:	https://git.zx2c4.com/WireGuard/snapshot/%{pname}-%{version}.tar.xz
+# Source0-md5:	5175ca88850993dc88a4c9d924ee79d4
+Patch0:		kernel-5.4.29.patch
 URL:		https://www.wireguard.com/
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:3.10}}
 BuildRequires:	libmnl-devel
@@ -72,6 +73,7 @@ WireGuard kernel module.\
 
 %prep
 %setup -q -n %{pname}-%{version}
+%patch0 -p1
 
 %build
 %{?with_kernel:%{expand:%build_kernel_packages}}
