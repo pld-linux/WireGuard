@@ -1,31 +1,17 @@
-# Conditional build:
-%bcond_without	kernel		# don't build kernel modules
-%bcond_without	userspace	# don't build userspace tools
-
-%if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
-%{error:kernel and userspace cannot be built at the same time on PLD builders}
-exit 1
-%endif
-
-%if %{without userspace}
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
-%endif
 
-%define		rel	2
-%define		pname	WireGuard
+%define		rel	1
 Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
-Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	0.0.20191219
+Name:		WireGuard%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
+Version:	1.0.20200429
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Networking/Daemons
-Source0:	https://git.zx2c4.com/WireGuard/snapshot/%{pname}-%{version}.tar.xz
-# Source0-md5:	5175ca88850993dc88a4c9d924ee79d4
-Patch0:		kernel-5.4.29.patch
+Source0:	https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-%{version}.tar.xz
+# Source0-md5:	7cf7fdcf51fbeb0517f67d04474f7819
 URL:		https://www.wireguard.com/
-%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:3.10}}
-BuildRequires:	libmnl-devel
+%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:3.10}
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -36,9 +22,6 @@ and more useful than IPSec, while avoiding the massive headache. It
 intends to be considerably more performant than OpenVPN. WireGuard is
 designed as a general purpose VPN for running on embedded interfaces
 and super computers alike, fit for many different circumstances.
-
-This package contains user space tools. You need to also install
-kernel module from kernel-*-misc-wireguard package.
 
 %define	kernel_pkg()\
 %package -n kernel%{_alt_kernel}-misc-wireguard\
@@ -51,11 +34,10 @@ Requires(postun):	%releq_kernel\
 \
 %description -n kernel%{_alt_kernel}-misc-wireguard\
 WireGuard kernel module.\
-%if %{with kernel}\
+\
 %files -n kernel%{_alt_kernel}-misc-wireguard\
 %defattr(644,root,root,755)\
 /lib/modules/%{_kernel_ver}/misc/*.ko*\
-%endif\
 \
 %post	-n kernel%{_alt_kernel}-misc-wireguard\
 %depmod %{_kernel_ver}\
@@ -69,49 +51,19 @@ WireGuard kernel module.\
 %install_kernel_modules -D installed -m src/wireguard -d misc\
 %{nil}
 
-%{?with_kernel:%{expand:%create_kernel_packages}}
+%{expand:%create_kernel_packages}
 
 %prep
-%setup -q -n %{pname}-%{version}
-%patch0 -p1
+%setup -q -n wireguard-linux-compat-%{version}
 
 %build
-%{?with_kernel:%{expand:%build_kernel_packages}}
-
-%if %{with userspace}
-%{make} -C src/tools
-%endif
+%{expand:%build_kernel_packages}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%if %{with kernel}
 install -d $RPM_BUILD_ROOT
 cp -a installed/* $RPM_BUILD_ROOT
-%endif
-
-%if %{with userspace}
-%{make} -C src/tools install \
-	PREFIX=$RPM_BUILD_ROOT%{_prefix} \
-	SYSCONFDIR=$RPM_BUILD_ROOT%{_sysconfdir} \
-	SYSTEMDUNITDIR=$RPM_BUILD_ROOT%{systemdunitdir} \
-	WITH_SYSTEMDUNITS=yes
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%postun
-%systemd_reload
-
-%if %{with userspace}
-%files
-%defattr(644,root,root,755)
-%doc contrib/examples README.md
-%attr(755,root,root) %{_bindir}/wg
-%attr(755,root,root) %{_bindir}/wg-quick
-%dir %{_sysconfdir}/wireguard
-%{systemdunitdir}/wg-quick@.service
-%{_mandir}/man8/wg-quick.8*
-%{_mandir}/man8/wg.8*
-%endif
