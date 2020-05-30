@@ -1,15 +1,15 @@
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 
-%define		rel	2
+%define		rel	1
 Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 Name:		WireGuard%{_alt_kernel}
-Version:	1.0.20200429
+Version:	1.0.20200520
 Release:	%{rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-%{version}.tar.xz
-# Source0-md5:	7cf7fdcf51fbeb0517f67d04474f7819
+# Source0-md5:	8f284b4816ed0a8da20a6c91cdc5499e
 URL:		https://www.wireguard.com/
 %{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:3.10}
 BuildRequires:	rpmbuild(macros) >= 1.701
