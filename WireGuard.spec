@@ -4,12 +4,12 @@
 %define		rel	1
 Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 Name:		WireGuard%{_alt_kernel}
-Version:	1.0.20200520
+Version:	1.0.20201112
 Release:	%{rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Networking/Daemons
 Source0:	https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-%{version}.tar.xz
-# Source0-md5:	8f284b4816ed0a8da20a6c91cdc5499e
+# Source0-md5:	3a2ac2fc1168a114c63f351d6c78d944
 URL:		https://www.wireguard.com/
 %{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:3.10}
 BuildRequires:	rpmbuild(macros) >= 1.701
