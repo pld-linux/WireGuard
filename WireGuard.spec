@@ -1,7 +1,7 @@
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 
-%define		rel	1
+%define		rel	2
 Summary:	WireGuard is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography
 Name:		WireGuard%{_alt_kernel}
 Version:	1.0.20220627
@@ -56,7 +56,7 @@ WireGuard kernel module.\
 
 %prep
 %setup -q -n wireguard-linux-compat-%{version}
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 %{expand:%build_kernel_packages}
